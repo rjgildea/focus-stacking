@@ -125,7 +125,6 @@ def get_fused_base(images, kernel_size):
     deviations = np.copy(entropies)
     for layer in range(layers):
         gray_image = cv2.cvtColor(images[layer].astype(np.float32), cv2.COLOR_BGR2GRAY).astype(np.uint8)
-        probabilities = get_probabilities(gray_image)
         entropies[layer] = entropy(gray_image, kernel_size)
         deviations[layer] = deviation(gray_image, kernel_size)
 
