@@ -16,10 +16,11 @@ def stack_focus(
     pyramid_min_size = 32,
     kernel_size = 5,
     blur_size = 5,
-    smooth_size = 32
+    smooth_size = 32,
+    align_iterations = 5000,
 ):
     images = np.array(images, dtype=images[0].dtype)
-    aligned_images, gray_images = align(images)
+    aligned_images, gray_images = align(images, iterations=align_iterations)
 
     if choice == CHOICE_PYRAMID:
         stacked_image = get_pyramid_fusion(aligned_images, pyramid_min_size)

@@ -7,7 +7,7 @@ import argparse
 
 import focus_stack as stk
 
-def main(src_dir, dest_dir, choice, energy, pyramid_min_size, kernel_size, blur_size, smooth_size):
+def main(src_dir, dest_dir, choice, energy, pyramid_min_size, kernel_size, blur_size, smooth_size, align_iterations):
     src_contents = os.walk(src_dir)
     dirpath, _, fnames = next(src_contents)
 
@@ -42,7 +42,8 @@ def main(src_dir, dest_dir, choice, energy, pyramid_min_size, kernel_size, blur_
         pyramid_min_size = pyramid_min_size,
         kernel_size = kernel_size,
         blur_size = blur_size,
-        smooth_size = smooth_size
+        smooth_size = smooth_size,
+        align_iterations = align_iterations,
     )
     if (cv2.imwrite(output_file, stacked_image)):
         print("image saved to {}".format(output_file))
@@ -63,6 +64,7 @@ if __name__ == "__main__":
     parser.add_argument('-k', '--kernel', type=int, default=5, dest='kernel_size', help='the size of the kernel used in laplacian energy calculations')
     parser.add_argument('-b', '--blur', type=int, default=5, dest='blur_size', help='the size of the gaussian blur in laplacian energy calculation')    
     parser.add_argument('-s', '--smooth', type=int, default=32, dest='smooth_size', help='the size of the kernel use in bilaterally filtering the energy matrix. Not used for pyramid.')
+    parser.add_argument('-i', '--iterations', type=int, default=5000, dest='align_iterations', help='the maximum number of iterations when aligning images')
 
     args = parser.parse_args()
     if args.choice == stk.CHOICE_PYRAMID and args.energy != stk.ENERGY_LAPLACIAN:
@@ -78,5 +80,6 @@ if __name__ == "__main__":
         args.pyramid_min_size,
         args.kernel_size,
         args.blur_size,
-        args.smooth_size
+        args.smooth_size,
+        args.align_iterations,
     )
