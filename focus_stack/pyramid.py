@@ -9,8 +9,8 @@ def generating_kernel(a):
 
 def reduce_layer(layer, kernel=generating_kernel(0.4)):
     if len(layer.shape) == 2:
-        convolution = convolve(layer, kernel)
-        return convolution[::2,::2]
+        convolution = cv2.pyrDown(layer)
+        return convolution
 
     ch_layer = reduce_layer(layer[:,:,0])
     next_layer = np.zeros(list(ch_layer.shape) + [layer.shape[2]], dtype = ch_layer.dtype)
@@ -23,10 +23,8 @@ def reduce_layer(layer, kernel=generating_kernel(0.4)):
 
 def expand_layer(layer, kernel=generating_kernel(0.4)):
     if len(layer.shape) == 2:
-        expand = np.zeros((2 * layer.shape[0], 2 * layer.shape[1]), dtype=np.float64)
-        expand[::2, ::2] = layer;
-        convolution = convolve(expand, kernel)
-        return 4.*convolution
+        convolution = cv2.pyrUp(layer)
+        return convolution
 
     ch_layer = expand_layer(layer[:,:,0])
     next_layer = np.zeros(list(ch_layer.shape) + [layer.shape[2]], dtype = ch_layer.dtype)
@@ -67,7 +65,7 @@ def laplacian_pyramid(images, levels):
             expanded = expand_layer(gaussian[level][layer])
             if expanded.shape != gauss_layer.shape:
                 expanded = expanded[:gauss_layer.shape[0],:gauss_layer.shape[1]]
-            pyramid[-1][layer] = gauss_layer - expanded
+            pyramid[-1][layer] = cv2.subtract(gauss_layer, expanded)
 
     return pyramid[::-1]
 
@@ -164,8 +162,8 @@ def get_fused_laplacian(laplacians):
     
     return fused
 
-def region_energy(laplacian):
-    return convolve(np.square(laplacian))
+def region_energy(laplacian, kernel=generating_kernel(0.4)):
+    return cv2.filter2D(np.square(laplacian), ddepth=-1, kernel=kernel)
 
 def get_pyramid_fusion(images, min_size = 32):
     smallest_side = min(images[0].shape[:2])
