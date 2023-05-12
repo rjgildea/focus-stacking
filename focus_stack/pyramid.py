@@ -9,8 +9,7 @@ def generating_kernel(a):
 
 def reduce_layer(layer, kernel=generating_kernel(0.4)):
     if len(layer.shape) == 2:
-        convolution = cv2.pyrDown(layer)
-        return convolution
+        return cv2.pyrDown(layer)
 
     ch_layer = reduce_layer(layer[:,:,0])
     next_layer = np.zeros(list(ch_layer.shape) + [layer.shape[2]], dtype = ch_layer.dtype)
@@ -23,8 +22,7 @@ def reduce_layer(layer, kernel=generating_kernel(0.4)):
 
 def expand_layer(layer, kernel=generating_kernel(0.4)):
     if len(layer.shape) == 2:
-        convolution = cv2.pyrUp(layer)
-        return convolution
+        return cv2.pyrUp(layer)
 
     ch_layer = expand_layer(layer[:,:,0])
     next_layer = np.zeros(list(ch_layer.shape) + [layer.shape[2]], dtype = ch_layer.dtype)
